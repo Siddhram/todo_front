@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, Search } from "lucide-react";
+import { Menu } from "lucide-react";
 
 const Appbar = () => {
   return (

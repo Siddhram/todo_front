@@ -1,10 +1,10 @@
 import axios from "axios";
 import React, { createContext, useEffect, useState } from "react";
 import { backendurl } from "../url";
-interface inter{
+export interface inter{
     todo:Todo[],
     func:()=>Promise<void>,
-        addtodo:()=>Promise<void>,
+    addtodo:()=>Promise<void>,
     updatetodo:()=>Promise<void>,
     deletetodo:()=>Promise<void>,
 
@@ -14,10 +14,13 @@ export interface Todo{
   dis?:string,
   iscompleted?:boolean
 }
-export const Contextdata=createContext<inter|undefined>(undefined);
+export const Contextdata=createContext<inter|undefined>( {todo: [],
+  func: async () => {},
+  addtodo: async () => {},
+  updatetodo: async () => {},
+  deletetodo: async () => {},});
 
 export const ContextdataProvider:React.FC<{children:React.ReactNode}>=({children})=>{
-    const[count,setcount]=useState(0);
     const[tododata,settododata]=useState<Todo[]>([])
     const featchtodo=async()=>{
       const res=await axios.get(`${backendurl()}/get`);
@@ -40,12 +43,12 @@ iscompleted
     }
     
     const deletetodo=async({id})=>{
-      const res=axios.post(`${backendurl()}/delete/${id}`);
+      const res=await axios.post(`${backendurl()}/delete/${id}`);
       featchtodo()
     }
     useEffect(()=>{
         featchtodo()
     },[updatetodo,deletetodo])
-  return <Contextdata.Provider value={{todo:tododata,func:featchtodo,addtodo,deletetodo,updatetodo}}>{children}</Contextdata.Provider>
+  return <Contextdata.Provider value={{todo:tododata,func:featchtodo,addtodo:addtodo,deletetodo,updatetodo}}>{children}</Contextdata.Provider>
 }
 
